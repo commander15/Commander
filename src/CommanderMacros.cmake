@@ -1,6 +1,6 @@
 function(add_package name)
     set(options)
-    set(oneValueArgs NAME VERSION NAMESPACE EXPORT)
+    set(oneValueArgs NAME VERSION NAMESPACE EXPORT PARENT)
     set(multiValueArgs)
 
     cmake_parse_arguments(ARG "${options}" "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
@@ -62,6 +62,10 @@ function(add_package name)
         PACKAGE_EXPORT    ${ARG_EXPORT}
         PACKAGE_EXPORTING OFF
     )
+
+    if (ARG_PARENT)
+        add_dependencies(${ARG_PARENT} ${name})
+    endif()
 
     __commander_register_target(${name} PACKAGE)
 endfunction()

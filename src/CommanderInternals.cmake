@@ -255,7 +255,10 @@ function(__commander_install type)
 endfunction()
 
 function(__commander_install_package target destination)
+    get_target_property(NAME ${target} PACKAGE_NAME)
     get_target_property(SOURCES ${target} SOURCES)
+    set(destination ${destination}/${NAME})
+
     __commander_install_files(${destination} ${SOURCES})
 
     get_target_property(EXPORT ${target} PACKAGE_EXPORTING)
