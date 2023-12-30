@@ -1,22 +1,50 @@
-if (ANDROID)
-    set(Platform Android)
-else()
-    set(Platform Default)
-endif()
+### CMake Packaging
 
-set(SUPPORT_FILE Commander${Platform}Support.cmake)
+set(ROOT ".")
+set(QML_IMPORT_PATH "qml")
 
-configure_file(CommanderConfig.cmake.in ${CMAKE_CURRENT_SOURCE_DIR}/CommanderConfig.cmake @ONLY)
-configure_file(CommanderConfigVersion.cmake.in ${CMAKE_CURRENT_SOURCE_DIR}/CommanderConfigVersion.cmake)
+include(CMakePackageConfigHelpers)
 
-set(SOURCES
-    CommanderConfig.cmake CommanderConfigVersion.cmake
-    CommanderMacros.cmake CommanderInternals.cmake
-    CommanderCMakeSupport.cmake
-    ${SUPPORT_FILE}
+configure_package_config_file(
+    CommanderConfig.cmake.in CommanderConfig.cmake
+    INSTALL_DESTINATION lib/cmake/Commander
+    PATH_VARS           ROOT QML_IMPORT_PATH
 )
 
-add_custom_target(commander SOURCES ${SOURCES})
+write_basic_package_version_file(
+    CommanderConfigVersion.cmake
+    VERSION       ${Commander_VERSION}
+    COMPATIBILITY AnyNewerVersion
+    ARCH_INDEPENDENT
+)
 
-file(COPY ${SOURCES} DESTINATION ${CMAKE_BINARY_DIR}/lib/cmake/Commander)
-install(FILES ${SOURCES} DESTINATION lib/cmake/Commander)
+set(CMAKE_SOURCES
+    CommanderMacros.cmake
+    CommanderTargetsMacros.cmake
+    CommanderUtilsMacros.cmake
+)
+
+add_custom_target(commanderpkg
+    SOURCES
+        CommanderConfig.cmake.in
+        ${CMAKE_SOURCES}
+)
+
+install(FILES
+    #${CMAKE_SOURCES}
+    ${CMAKE_CURRENT_BINARY_DIR}/CommanderConfig.cmake
+    ${CMAKE_CURRENT_BINARY_DIR}/CommanderConfigVersion.cmake
+    DESTINATION lib/cmake/Commander
+)
+
+### Impl
+
+add_subdirectory(core)
+
+add_subdirectory(imports)
+
+install(EXPORT CommanderTargets
+    NAMESPACE   Commander::
+    FILE        CommanderTargets.cmake
+    DESTINATION lib/cmake/Commander
+)
