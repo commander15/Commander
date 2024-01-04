@@ -25,7 +25,8 @@ bool CommanderUrlInterceptor::canIntercept(const QUrl &path, DataType type) cons
     switch (type) {
     case UrlString:
     case QmlFile:
-        return path.path().startsWith(COMMANDER_URL)
+        return !path.path().startsWith("image://")
+               && path.path().startsWith(COMMANDER_URL)
                && !QFile::exists(':' + path.path());
 
     default:

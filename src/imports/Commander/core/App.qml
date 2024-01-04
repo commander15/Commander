@@ -6,7 +6,7 @@ import QtQuick.Controls
 import QtQuick.Layouts
 
 ApplicationWindow {
-    id: window
+    id: app
 
     property NavigationDrawer drawer
     property NavigationBar navBar
@@ -78,7 +78,6 @@ ApplicationWindow {
 
     Component.onCompleted: function() {
         CommanderHelper.init(this);
-        visible = true;
     }
 
     ColumnLayout {
@@ -115,10 +114,12 @@ ApplicationWindow {
                     if (!child.itemType)
                         continue;
                     else if (child.itemType === "NavigationDrawer") {
-                        window.drawer = child;
+                        app.drawer = child;
                         break;
                     }
                 }
+
+                app.visible = true;
             }
         }
 
@@ -127,7 +128,7 @@ ApplicationWindow {
                 color: "black"
             }
 
-            visible: window.forceMobile && Qt.platform.os !== "android"
+            visible: app.forceMobile && Qt.platform.os !== "android"
 
             Layout.fillWidth: true
             Layout.preferredHeight: 56
@@ -137,35 +138,35 @@ ApplicationWindow {
 
                 Button {
                     icon.source: "qrc:/qt/qml/Commander/icons/nav_drawer.png"
-                    visible: window.drawer
+                    visible: app.drawer
 
                     Layout.preferredWidth: 128
                     Layout.alignment: Qt.AlignVCenter|Qt.AlignRight
 
-                    onClicked: window.drawer.open()
+                    onClicked: app.drawer.open()
                 }
 
                 Button {
                     icon.source: "qrc:/qt/qml/Commander/icons/commander_logo.png"
-                    visible: window.nav
+                    visible: app.nav
 
                     Layout.preferredWidth: 128
                     Layout.alignment: Qt.AlignCenter
 
                     onClicked: function() {
-                        while (window.nav.depth > 1)
-                            window.nav.pop();
+                        while (app.nav.depth > 1)
+                            app.nav.pop();
                     }
                 }
 
                 Button {
                     icon.source: "qrc:/qt/qml/Commander/icons/nav_back.png"
-                    visible: window.nav
+                    visible: app.nav
 
                     Layout.preferredWidth: 128
                     Layout.alignment: Qt.AlignVCenter|Qt.AlignLeft
 
-                    onClicked: window.nav.pop()
+                    onClicked: app.nav.pop()
                 }
             }
         }

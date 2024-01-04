@@ -6,10 +6,21 @@ import QtQuick.Layouts
 AppImage {
     id: image
 
+    property url remoteSource
     property url fallbackSource
     property alias fallbackImageItem: fallbackImage
 
-    imageItem.visible: imageItem.status === Image.Ready
+    function imageSource(url) {
+        if (url.toString().length === 0)
+            return "";
+
+        if (cache)
+            return "image://commander_image/" + url;
+        else
+            return url.toString();
+    }
+
+    source: imageSource(remoteSource)
 
     AppImage {
         id: fallbackImage
@@ -26,7 +37,7 @@ AppImage {
         radius: image.radius
         rounded: image.rounded
 
-        visible: image.imageItem.status !== Image.Ready
+        visible: image.status !== Image.Ready
 
         anchors.fill: parent
     }
